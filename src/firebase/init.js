@@ -13,6 +13,7 @@ const firebaseConfig = {
 };
 
 // 上記設定でfirebase開始
-const firebaseApp = firebaseConfig.initalizeApp(firebaseConfig);
+const firebaseApp = firebase.initializeApp(firebaseConfig);
+
 // firestoreをエクスポート
 export default firebaseApp.firestore();
