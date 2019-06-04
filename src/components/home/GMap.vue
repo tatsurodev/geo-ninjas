@@ -4,6 +4,8 @@
   </div>
 </template>
 <script>
+import firebase from "firebase";
+
 export default {
   name: "GMap",
   data() {
@@ -28,6 +30,8 @@ export default {
   },
   mounted() {
     this.renderMap();
+    // firebase.auth()がスタートしてからvueインスタンスを開始するようにしないと現在のログインユーザーが取得できないので、vueインスタンス全体をラップする必要がある
+    console.log(firebase.auth().currentUser);
   }
 };
 </script>
