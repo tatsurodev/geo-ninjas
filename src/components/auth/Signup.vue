@@ -57,6 +57,20 @@ export default {
             firebase
               .auth()
               .createUserWithEmailAndPassword(this.email, this.password)
+              // 返ってくるプロミスであるcredentialの中にuserプロパティがある
+              .then(credential => {
+                // setはドキュメント、addはコレクションのメソッドであることに注意
+                ref.set({
+                  alias: this.alias,
+                  geolocation: null,
+                  // 関連するuser_idを保存
+                  user_id: credential.user.uid
+                });
+              })
+              // ユーザー付属情報の保存完了でリダイレクト
+              .then(() => {
+                this.$router.push({ name: "GMap" });
+              })
               // プロミスで返ってくるのでエラーがあればキャッチ
               .catch(err => {
                 console.log(err);
