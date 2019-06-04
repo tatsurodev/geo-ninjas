@@ -2,7 +2,7 @@
   <div class="navbar">
     <nav class="deep-purple darken-1">
       <div class="container">
-        <a href class="brand-logo left">GeoNinjas!</a>
+        <router-link class="brand-logo left" :to="{ name: 'GMap' }">GeoNinjas!</router-link>
         <ul class="right">
           <li>
             <router-link :to="{ name: 'Signup' }">Signup</router-link>
@@ -35,7 +35,7 @@ export default {
         .signOut()
         // プロミスが返ってくるのでのちにリダイレクト
         .then(() => {
-          this.$router.push({ name: "Signup" });
+          this.$router.push({ name: "Login" });
         });
     }
   }

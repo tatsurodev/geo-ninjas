@@ -19,6 +19,8 @@
 </template>
 
 <script>
+import firebase from "firebase";
+
 export default {
   name: "Login",
   data() {
@@ -30,7 +32,27 @@ export default {
   },
   methods: {
     login() {
-      console.log(this.email, this.password);
+      // 両方空でない
+      if (this.email && this.password) {
+        firebase
+          .auth()
+          // ログイン
+          .signInWithEmailAndPassword(this.email, this.password)
+          // プロミスとしてcredentialが返ってくる、credential.userにログインユーザー情報
+          .then(credential => {
+            console.log(credential.user);
+            this.$router.push({ name: "GMap" });
+          })
+          .catch(err => {
+            // ログイン失敗でエラーメッセージ格納
+            this.feedback = err.message;
+          });
+        // ログイン成功でfeedback初期化
+        this.feedback = null;
+      } else {
+        // 空あり
+        this.feedback = "Please fill in both fields.";
+      }
     }
   }
 };
