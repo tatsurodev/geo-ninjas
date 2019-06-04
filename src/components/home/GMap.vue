@@ -29,9 +29,29 @@ export default {
     }
   },
   mounted() {
-    this.renderMap();
+    // geolocationのapiが許可されていれば
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        // 第一引数、現在位置が所得できたときのコールバックで位置情報が渡される
+        pos => {
+          this.lat = pos.coords.latitude;
+          this.lng = pos.coords.longitude;
+          this.renderMap();
+        },
+        // 第二引数、失敗時のコールバック
+        err => {
+          console.log(err);
+          this.renderMap();
+        },
+        // 第三引数、オプションをオブジェクトで指定。maximumAgeはgeolocationのキャッシュ、timeoutは失敗判定までの時間
+        { maximumAge: 60000, timeout: 3000 }
+      );
+    } else {
+      // デフォルトの値で表示
+      this.renderMap();
+    }
     // firebase.auth()がスタートしてからvueインスタンスを開始するようにしないと現在のログインユーザーが取得できないので、vueインスタンス全体をラップする必要がある
-    console.log(firebase.auth().currentUser);
+    // console.log(firebase.auth().currentUser);
   }
 };
 </script>
