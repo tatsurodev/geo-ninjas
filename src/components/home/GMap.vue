@@ -5,6 +5,7 @@
 </template>
 <script>
 import firebase from "firebase";
+import db from "@/firebase/init";
 
 export default {
   name: "GMap",
@@ -29,6 +30,9 @@ export default {
     }
   },
   mounted() {
+    // 現ユーザー取得
+    let user = firebase.auth().currentUser;
+    // console.log(user);
     // geolocationのapiが許可されていれば
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -36,7 +40,32 @@ export default {
         pos => {
           this.lat = pos.coords.latitude;
           this.lng = pos.coords.longitude;
-          this.renderMap();
+          // 現ユーザーのdoc取得、geolocationを更新
+          db.collection("users")
+            .where("user_id", "==", user.uid)
+            .get()
+            // 条件に合致するsnapshot(複数のdoc)のプロミスが返ってくる
+            .then(snapshot => {
+              // この場合、docは一つのみ
+              snapshot.forEach(doc => {
+                console.log(doc.id);
+                // 下記は作動しない
+                // doc.update({
+                //   geolocation: "ok"
+                // });
+                db.collection("users")
+                  .doc(doc.id)
+                  .update({
+                    geolocation: {
+                      lat: this.lat,
+                      lng: this.lng
+                    }
+                  });
+              });
+            })
+            .then(() => {
+              this.renderMap();
+            });
         },
         // 第二引数、失敗時のコールバック
         err => {
