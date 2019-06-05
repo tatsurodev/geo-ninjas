@@ -3,7 +3,10 @@
     <div class="card" v-if="profile">
       <h2 class="deep-purple-text center">{{ profile.alias }}'s Wall</h2>
       <ul class="comments collection">
-        <li>Comment</li>
+        <li v-for="(comment, index) in comments" :key="index">
+          <div class="deep-purple-text">{{ comment.from }}</div>
+          <div class="grep-text text-darken-2">{{ comment.content }}</div>
+        </li>
       </ul>
       <form @submit.prevent="addComment">
         <div class="field">
@@ -26,7 +29,8 @@ export default {
       profile: null,
       newComment: null,
       feedback: null,
-      user: null
+      user: null,
+      comments: []
     };
   },
   created() {
@@ -47,6 +51,21 @@ export default {
       .get()
       .then(user => {
         this.profile = user.data();
+      });
+    // コメント取得
+    db.collection("comments")
+      .where("to", "==", this.$route.params.id)
+      // .orderBy("time") firestoreにインデックス追加でソート機能が使える
+      .onSnapshot(snapshot => {
+        snapshot.docChanges().forEach(change => {
+          if (change.type == "added") {
+            // unshiftで先頭に追加、pushは末尾に追加
+            this.comments.unshift({
+              from: change.doc.data().from,
+              content: change.doc.data().content
+            });
+          }
+        });
       });
   },
   methods: {
