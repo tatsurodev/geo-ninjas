@@ -4,13 +4,16 @@
       <div class="container">
         <router-link class="brand-logo left" :to="{ name: 'GMap' }">GeoNinjas!</router-link>
         <ul class="right">
-          <li>
+          <li v-if="!user">
             <router-link :to="{ name: 'Signup' }">Signup</router-link>
           </li>
-          <li>
+          <li v-if="!user">
             <router-link :to="{ name: 'Login' }">Login</router-link>
           </li>
-          <li>
+          <li v-if="user">
+            <a>{{ user.email }}</a>
+          </li>
+          <li v-if="user">
             <a @click="logout">Logout</a>
           </li>
         </ul>
@@ -25,7 +28,9 @@ import firebase from "firebase";
 export default {
   name: "Navbar",
   data() {
-    return {};
+    return {
+      user: null
+    };
   },
   methods: {
     logout() {
@@ -38,6 +43,17 @@ export default {
           this.$router.push({ name: "Login" });
         });
     }
+  },
+  created() {
+    // 下記のコードだとcreatedの一度だけuserが取得されることになり、ログインログアウト時に新たにユーザーを取得するには不適
+    // let user = firebase.auth().currentUser;
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.user = user;
+      } else {
+        this.user = null;
+      }
+    });
   }
 };
 </script>
