@@ -44,7 +44,12 @@ export default {
               });
               // マーカーにクリックイベント
               marker.addListener("click", () => {
-                console.log(doc.id);
+                // console.log(doc.id);
+                // プロフィールページにリダイレクト
+                this.$router.push({
+                  name: "ViewProfile",
+                  params: { id: doc.id }
+                });
               });
             }
           });
